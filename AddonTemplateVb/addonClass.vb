@@ -11,11 +11,10 @@ Namespace addonCollectionName
         Inherits AddonBaseClass
         '
         ' - update references to your installed version of cpBase
-        ' - Verify project root name space is empty
-        ' - Change the namespace to the collection name
+        ' - Edit project - under application, verify root name space is empty
+        ' - Change the namespace in this file to the collection name
         ' - Change this class name to the addon name
-        ' - Create a Contensive Addon record with the namespace apCollectionName.ad
-        ' - add reference to CPBase.DLL, typically installed in c:\program files\kma\contensive\
+        ' - Create a Contensive Addon record, set the dotnet class full name to yourNameSpaceName.yourClassName
         '
         '=====================================================================================
         ' addon api
