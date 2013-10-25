@@ -18,7 +18,17 @@ namespace addonTemplateCs
         //
         public override object Execute(Contensive.BaseClasses.CPBaseClass cp)
         {
-            return "Hello World";
+            string returnHtml = "";
+            try
+            {
+                returnHtml = "Visual Studio add-on assembly - OK response";
+            }
+            catch (Exception ex)
+            {
+                cp.Site.ErrorReport( "There was a unexpected exception, " + ex.ToString() );
+                returnHtml = "Visual Studio add-on assembly - error response";
+            }
+            return returnHtml;
         }
     }
 }
