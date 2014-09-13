@@ -5,7 +5,7 @@ Imports Contensive.BaseClasses
 
 Namespace Contensive.addons.multiFormAjaxSample
     '
-    Public Class form2Class
+    Public Class form4Class
         Inherits formBaseClass
         '
         '
@@ -24,9 +24,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' determine the next form
                 '
                 Select Case button
-                    Case buttonNext
-                        nextFormId = formIdThree
-                    Case buttonPrevious
+                    Case buttonRestart
                         nextFormId = formIdOne
                 End Select
             Catch ex As Exception
@@ -44,7 +42,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 Dim cs As CPCSBaseClass = cp.CSNew
                 Dim body As String
                 '
-                Call layout.OpenLayout("MultiFormAjaxSample - Form 2")
+                Call layout.OpenLayout("MultiFormAjaxSample - Form 4")
                 '
                 ' manuiplate the html, pre-populating fields, hiding parts not needed, etc.
                 ' get the resulting form from the layout object
@@ -53,7 +51,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 body = layout.GetHtml()
                 body &= cp.Html.Hidden(rnSrcFormId, dstFormId.ToString)
-                returnHtml = cp.Html.Form(body, , , "mfaForm2")
+                returnHtml = cp.Html.Form(body, , , "mfaForm3")
             Catch ex As Exception
                 errorReport(ex, cp, "getForm")
             End Try

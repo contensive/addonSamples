@@ -11,12 +11,16 @@ Namespace Contensive.addons.multiFormAjaxSample
         Public Const cr2 As String = cr & vbTab
         Public Const cr3 As String = cr2 & vbTab
         '
-        Public Const buttonOK As String = " OK "
-        Public Const buttonSave As String = " Save "
-        Public Const buttonCancel As String = " Cancel "
-        Public Const buttonNext As String = " Next "
-        Public Const buttonPrevious As String = " Previous "
-        Public Const buttonContinue As String = " Continue "
+        Friend Const cnMultiFormAjaxApplications As String = "MultiFormAjax Application"
+        '
+        Public Const buttonOK As String = "OK"
+        Public Const buttonSave As String = "Save"
+        Public Const buttonCancel As String = "Cancel"
+        Public Const buttonNext As String = "Next"
+        Public Const buttonPrevious As String = "Previous"
+        Public Const buttonContinue As String = "Continue"
+        Public Const buttonRestart As String = "Restart"
+        Public Const buttonFinish As String = "Finish"
         '
         ' request names 
         '
@@ -30,6 +34,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         Public Const formIdOne As Integer = 1
         Public Const formIdTwo As Integer = 2
         Public Const formIdThree As Integer = 3
+        Public Const formIdFour As Integer = 4
         '
         ' A few common usefull routines 
         '
@@ -76,6 +81,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                     End If
                 End If
             Catch ex As Exception
+                Call cp.Site.ErrorReport(ex, "Error in getRightNow")
             End Try
             Return returnValue
         End Function
@@ -99,5 +105,36 @@ Namespace Contensive.addons.multiFormAjaxSample
             Call cp.File.CreateFolder(cp.Site.PhysicalInstallPath & "\logs\multiformAjaxSample")
             Call cp.Utils.AppendLog("multiformAjaxSample\" & logFilename, logMessage)
         End Sub
+        '
+        '
+        '
+        Friend Function getApplicationId(ByVal cp As CPBaseClass, ByVal addIfMissing As Boolean) As Integer
+            Dim applicationId As Integer = 0
+            Try
+                Dim cs As CPCSBaseClass = cp.CSNew()
+                Dim csSrc As CPCSBaseClass = cp.CSNew()
+                If cs.Open("MultiFormAjax Application", "(visitid=" & cp.Visit.Id & ")and(dateCompleted is null)") Then
+                    applicationId = cs.GetInteger("id")
+                End If
+                Call cs.Close()
+                If (applicationId = 0) And addIfMissing Then
+                    If cs.Insert("MultiFormAjax Application") Then
+                        applicationId = cs.GetInteger("id")
+                        Call cs.SetField("visitId", cp.Visit.Id.ToString)
+                        If csSrc.Open("people", "id=" & cp.User.Id) Then
+                            Call cs.SetField("firstName", csSrc.GetText("firstName"))
+                            Call cs.SetField("lastName", csSrc.GetText("lastName"))
+                            Call cs.SetField("email", csSrc.GetText("email"))
+                        End If
+                        Call csSrc.Close()
+                    End If
+                    Call cs.Close()
+                End If
+
+            Catch ex As Exception
+                Call cp.Site.ErrorReport(ex, "Error in getApplicationId")
+            End Try
+            Return applicationId
+        End Function
     End Module
 End Namespace

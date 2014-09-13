@@ -32,9 +32,4 @@ Namespace Contensive.addons.multiFormAjaxSample
             Return returnHtml
         End Function
     End Class
-    '
-    Public MustInherit Class formBaseClass
-        Friend MustOverride Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date) As Integer
-        Friend MustOverride Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date) As String
-    End Class
 End Namespace

@@ -2,6 +2,12 @@
 Imports Contensive.BaseClasses
 
 Namespace Contensive.addons.multiFormAjaxSample
+    '
+    Public MustInherit Class formBaseClass
+        Friend MustOverride Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As Integer
+        Friend MustOverride Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
+    End Class
+    '
     Public Class formHandlerClass
         Inherits AddonBaseClass
         '
@@ -25,21 +31,41 @@ Namespace Contensive.addons.multiFormAjaxSample
                 Dim srcFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnSrcFormId))
                 Dim dstFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnDstFormId))
                 Dim formHandler As formHandlerClass = New formHandlerClass
+                Dim applicationId As Integer
+                '
+                ' get previously started application
+                '
+                applicationId = getApplicationId(CP, False)
+                '
+                ' if there is no application, only allow form one
+                '
+                If applicationId = 0 Then
+                    If srcFormId <> formIdOne Then
+                        srcFormId = 0
+                    End If
+                    dstFormId = formIdOne
+                End If
+                '
+                ' process forms
                 '
                 If (srcFormId <> 0) Then
                     Select Case srcFormId
                         Case formIdOne
                             '
                             form = New form1Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
                         Case formIdTwo
                             '
                             form = New form2Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
                         Case formIdThree
                             '
                             form = New form3Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
+                        Case formIdFour
+                            '
+                            form = New form4Class
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
                     End Select
                 End If
                 '
@@ -47,31 +73,39 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' put the default form as the else case - to display if nothing else is selected
                 '
                 Select Case dstFormId
+                    Case formIdFour
+                        '
+                        '
+                        '
+                        form = New form4Class
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
                     Case formIdThree
                         '
                         '
                         '
                         form = New form3Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
                     Case formIdTwo
                         '
                         '
                         '
                         form = New form2Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
                     Case Else
                         '
                         ' default is account list
                         '
+                        dstFormId = formIdOne
                         form = New form1Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
                 End Select
+                '
+                ' assemble body
+                '
+                returnHtml = body
             Catch ex As Exception
                 CP.Site.ErrorReport(ex, "error in formHandlerClass.execute")
             End Try
-            '
-            ' assemble body
-            '
             Return returnHtml
         End Function
     End Class

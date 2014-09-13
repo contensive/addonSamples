@@ -10,15 +10,21 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date) As Integer
+        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
                 Dim button As String = cp.Doc.GetProperty(rnButton)
+                Dim cs As CPCSBaseClass = cp.CSNew
                 '
-                If button = buttonSave Or button = buttonOK Then
+
+                If button = buttonFinish Then
                     '
                     ' process the form
                     '
+                    If cs.Open(cnMultiFormAjaxApplications, "id=" & applicationId) Then
+                        Call cs.SetField("dateCompleted", rightNow.ToString)
+                    End If
+                    Call cs.Close()
                 End If
                 '
                 ' determine the next form
@@ -26,6 +32,8 @@ Namespace Contensive.addons.multiFormAjaxSample
                 Select Case button
                     Case buttonPrevious
                         nextFormId = formIdTwo
+                    Case buttonFinish
+                        nextFormId = formIdFour
                 End Select
             Catch ex As Exception
                 errorReport(ex, cp, "processForm")
@@ -35,7 +43,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date) As String
+        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
             Dim returnHtml As String = ""
             Try
                 Dim layout As CPBlockBaseClass = cp.BlockNew
