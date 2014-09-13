@@ -10,7 +10,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As Integer
+        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
                 Dim button As String = cp.Doc.GetProperty(rnButton)
@@ -35,7 +35,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
+        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As String
             Dim returnHtml As String = ""
             Try
                 Dim layout As CPBlockBaseClass = cp.BlockNew

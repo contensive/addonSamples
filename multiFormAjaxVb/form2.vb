@@ -10,25 +10,47 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As Integer
+        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
                 Dim button As String = cp.Doc.GetProperty(rnButton)
+                Dim cs As CPCSBaseClass = cp.CSNew
+                Dim lastName As String
+                Dim isInputOK As Boolean = True
                 '
-                If button = buttonSave Or button = buttonOK Then
-                    '
-                    ' process the form
-                    '
+                ' if the application record has not been created yet, create  it now
+                '
+                If applicationId = 0 Then
+                    applicationId = getApplicationId(cp, True)
                 End If
                 '
-                ' determine the next form
+                ' check the input requirements
+                ' if user errors are handled with javascript, no need to display a message, just prevent save
                 '
-                Select Case button
-                    Case buttonNext
-                        nextFormId = formIdThree
-                    Case buttonPrevious
-                        nextFormId = formIdOne
-                End Select
+                lastName = cp.Doc.GetText("lastName")
+                If lastName = "" Then
+                    isInputOK = False
+                End If
+                '
+                ' if no user errors, process input
+                ' if errors, just return default nextFormId which will redisplay this form
+                '
+                If isInputOK Then
+                    If cs.Open(cnMultiFormAjaxApplications, "id=" & applicationId) Then
+                        Call cs.SetField("lastName", lastName)
+                    End If
+                    Call cs.Close()
+                    '
+                    ' determine the next form
+                    '
+                    Select Case button
+                        Case buttonNext
+                            nextFormId = formIdThree
+                        Case buttonPrevious
+                            nextFormId = formIdOne
+                    End Select
+                End If
+
             Catch ex As Exception
                 errorReport(ex, cp, "processForm")
             End Try
@@ -37,16 +59,22 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
+        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As String
             Dim returnHtml As String = ""
             Try
                 Dim layout As CPBlockBaseClass = cp.BlockNew
                 Dim cs As CPCSBaseClass = cp.CSNew
                 Dim body As String
+                Dim lastName As String
                 '
                 Call layout.OpenLayout("MultiFormAjaxSample - Form 2")
                 '
                 ' manuiplate the html, pre-populating fields, hiding parts not needed, etc.
+                '
+                If cs.Open("MultiFormAjax Application", "(id=" & applicationId & ")") Then
+                    lastName = cs.GetText("lastName")
+                End If
+                Call cs.Close()
                 ' get the resulting form from the layout object
                 ' add the srcFormId as a hidden
                 ' wrap it in a form for the javascript to use during submit

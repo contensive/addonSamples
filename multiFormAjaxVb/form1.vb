@@ -10,7 +10,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightnow As Date, ByRef applicationId As Integer) As Integer
+        Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightnow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
                 Dim button As String = cp.Doc.GetProperty(rnButton)
@@ -56,7 +56,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
+        Friend Overrides Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As String
             Dim returnHtml As String = ""
             Try
                 Dim layout As CPBlockBaseClass = cp.BlockNew
@@ -70,7 +70,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' get the resulting form from the layout object
                 ' add the srcFormId as a hidden
                 '
-                If applicationId = 0 Then
+                If application.id = 0 Then
                     '
                     ' the first form must be handled a little differently because it will be displayed before anyone submits a form. 
                     ' So the user may not continue and should not get an application record.
@@ -85,7 +85,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                     '
                     ' populate the form from the application
                     '
-                    If cs.Open("MultiFormAjax Application", "(id=" & applicationId & ")") Then
+                    If cs.Open("MultiFormAjax Application", "(id=" & ApplicationId & ")") Then
                         firstName = cs.GetText("firstName")
                     End If
                     Call cs.Close()

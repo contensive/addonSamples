@@ -3,11 +3,6 @@ Imports Contensive.BaseClasses
 
 Namespace Contensive.addons.multiFormAjaxSample
     '
-    Public MustInherit Class formBaseClass
-        Friend MustOverride Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As Integer
-        Friend MustOverride Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef applicationId As Integer) As String
-    End Class
-    '
     Public Class formHandlerClass
         Inherits AddonBaseClass
         '
@@ -31,15 +26,15 @@ Namespace Contensive.addons.multiFormAjaxSample
                 Dim srcFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnSrcFormId))
                 Dim dstFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnDstFormId))
                 Dim formHandler As formHandlerClass = New formHandlerClass
-                Dim applicationId As Integer
+                Dim application As applicationClass
                 '
                 ' get previously started application
                 '
-                applicationId = getApplicationId(CP, False)
+                application = getApplication(CP, False)
                 '
                 ' if there is no application, only allow form one
                 '
-                If applicationId = 0 Then
+                If application.id = 0 Then
                     If srcFormId <> formIdOne Then
                         srcFormId = 0
                     End If

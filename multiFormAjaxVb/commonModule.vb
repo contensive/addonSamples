@@ -4,7 +4,28 @@ Option Strict On
 Imports Contensive.BaseClasses
 
 Namespace Contensive.addons.multiFormAjaxSample
+    '
+    ' This class holds the current application, so the Db only has to be read once and saved once
+    ' for some requrements this can be larger and describe an entire environment, to include values from many records.
+    ' for some projects, you may decide that every page does not need all the values stored in this class. In that case you can create
+    ' methods in the class that load on demand. For instance, in the constructor just pass cp and exit. When firstname is used, check if the 
+    ' application id is 0. If so, read all the values from the application record into the object before returning firstName.
+    '
+    Public Class applicationClass
+        Public id As Integer
+        Public firstName As String
+        Public lastName As String
+        Public email As String
+    End Class
+    '
+    ' base class for the form classes. Having this means in he form handler you can only create one object, not one per form
+    '
+    Public MustInherit Class formBaseClass
+        Friend MustOverride Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As Integer
 
+        Friend MustOverride Function getForm(ByVal cp As CPBaseClass, ByVal dstFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As String
+    End Class
+    '
     Public Module commonModule
         '
         Public Const cr As String = vbCrLf & vbTab
@@ -108,33 +129,53 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
-        Friend Function getApplicationId(ByVal cp As CPBaseClass, ByVal addIfMissing As Boolean) As Integer
-            Dim applicationId As Integer = 0
+        Friend Function getApplication(ByVal cp As CPBaseClass, ByVal createRecordIfMissing As Boolean) As applicationClass
+            Dim application As applicationClass = New applicationClass
             Try
                 Dim cs As CPCSBaseClass = cp.CSNew()
                 Dim csSrc As CPCSBaseClass = cp.CSNew()
-                If cs.Open("MultiFormAjax Application", "(visitid=" & cp.Visit.Id & ")and(dateCompleted is null)") Then
-                    applicationId = cs.GetInteger("id")
+                '
+                ' get id of this user's application
+                ' use visit property if they keep the same application for the visit
+                ' use visitor property if each time they open thier browser, they get the previous application
+                ' use user property if they only get to the application when they are associated to the current user (they should be authenticated first)
+                '
+                application.id = cp.Visit.GetInteger("multiformAjaxSample ApplicationId")
+                'application.id = cp.Visitor.GetInteger("multiformAjaxSample ApplicationId")
+                'application.id = cp.user.GetInteger("multiformAjaxSample ApplicationId")
+                If (application.id <> 0) Then
+                    If Not cs.Open("MultiFormAjax Application", "(dateCompleted is null)") Then
+                        application.id = 0
+                    End If
+                End If
+                If (Not cs.OK) Then
+                    If csSrc.Open("people", "id=" & cp.User.Id) Then
+                        application.firstName = csSrc.GetText("firstName")
+                        application.lastName = csSrc.GetText("lastName")
+                        application.email = csSrc.GetText("email")
+                    End If
+                    Call csSrc.Close()
+                    If createRecordIfMissing Then
+                        Call cs.Close()
+                        If cs.Insert("MultiFormAjax Application") Then
+                            application.id = cs.GetInteger("id")
+                            Call cs.SetField("firstName", application.firstName)
+                            Call cs.SetField("lastName", application.lastName)
+                            Call cs.SetField("email", application.email)
+                        End If
+                    End If
+                End If
+                If cs.OK Then
+                    application.firstName = cs.GetText("firstName")
+                    application.lastName = cs.GetText("lastName")
+                    application.email = cs.GetText("email")
                 End If
                 Call cs.Close()
-                If (applicationId = 0) And addIfMissing Then
-                    If cs.Insert("MultiFormAjax Application") Then
-                        applicationId = cs.GetInteger("id")
-                        Call cs.SetField("visitId", cp.Visit.Id.ToString)
-                        If csSrc.Open("people", "id=" & cp.User.Id) Then
-                            Call cs.SetField("firstName", csSrc.GetText("firstName"))
-                            Call cs.SetField("lastName", csSrc.GetText("lastName"))
-                            Call cs.SetField("email", csSrc.GetText("email"))
-                        End If
-                        Call csSrc.Close()
-                    End If
-                    Call cs.Close()
-                End If
 
             Catch ex As Exception
-                Call cp.Site.ErrorReport(ex, "Error in getApplicationId")
+                Call cp.Site.ErrorReport(ex, "Error in getApplication")
             End Try
-            Return applicationId
+            Return application
         End Function
     End Module
 End Namespace
