@@ -20,8 +20,8 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 ' if the application record has not been created yet, create  it now
                 '
-                If applicationId = 0 Then
-                    applicationId = getApplicationId(cp, True)
+                If application.id = 0 Then
+                    application = getApplication(cp, True)
                 End If
                 '
                 ' check the input requirements
@@ -36,10 +36,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' if errors, just return default nextFormId which will redisplay this form
                 '
                 If isInputOK Then
-                    If cs.Open(cnMultiFormAjaxApplications, "id=" & applicationId) Then
-                        Call cs.SetField("firstName", firstName)
-                    End If
-                    Call cs.Close()
+                    application.firstName = firstName
                     '
                     ' determine the next form
                     '
@@ -70,27 +67,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' get the resulting form from the layout object
                 ' add the srcFormId as a hidden
                 '
-                If application.id = 0 Then
-                    '
-                    ' the first form must be handled a little differently because it will be displayed before anyone submits a form. 
-                    ' So the user may not continue and should not get an application record.
-                    ' To display the form, check if the application has been created. If yes, prepopulate the form from the application. 
-                    ' If not, populate the form from the same source used to populate the application.
-                    '
-                    If cs.Open("people", "id=" & cp.User.Id) Then
-                        firstName = cs.GetText("firstName")
-                    End If
-                    Call cs.Close()
-                Else
-                    '
-                    ' populate the form from the application
-                    '
-                    If cs.Open("MultiFormAjax Application", "(id=" & ApplicationId & ")") Then
-                        firstName = cs.GetText("firstName")
-                    End If
-                    Call cs.Close()
-                End If
-                Call layout.SetInner("#mfaFirstNameWrapper", cp.Html.InputText("firstName", firstName))
+                Call layout.SetInner("#mfaFirstNameWrapper", cp.Html.InputText("firstName", application.firstName))
                 '
                 ' wrap it in a form for the javascript to use during submit
                 '

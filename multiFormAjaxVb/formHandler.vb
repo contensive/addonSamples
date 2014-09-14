@@ -48,19 +48,19 @@ Namespace Contensive.addons.multiFormAjaxSample
                         Case formIdOne
                             '
                             form = New form1Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, application)
                         Case formIdTwo
                             '
                             form = New form2Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, application)
                         Case formIdThree
                             '
                             form = New form3Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, application)
                         Case formIdFour
                             '
                             form = New form4Class
-                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, applicationId)
+                            dstFormId = form.processForm(CP, srcFormId, rqs, rightNow, application)
                     End Select
                 End If
                 '
@@ -73,27 +73,28 @@ Namespace Contensive.addons.multiFormAjaxSample
                         '
                         '
                         form = New form4Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, application)
                     Case formIdThree
                         '
                         '
                         '
                         form = New form3Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, application)
                     Case formIdTwo
                         '
                         '
                         '
                         form = New form2Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, application)
                     Case Else
                         '
                         ' default is account list
                         '
                         dstFormId = formIdOne
                         form = New form1Class
-                        body = form.getForm(CP, dstFormId, rqs, rightNow, applicationId)
+                        body = form.getForm(CP, dstFormId, rqs, rightNow, application)
                 End Select
+                Call saveApplication(CP, application, rightNow)
                 '
                 ' assemble body
                 '

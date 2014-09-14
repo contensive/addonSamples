@@ -16,6 +16,8 @@ Namespace Contensive.addons.multiFormAjaxSample
         Public firstName As String
         Public lastName As String
         Public email As String
+        Public completed As Boolean
+        Public changed As Boolean
     End Class
     '
     ' base class for the form classes. Having this means in he form handler you can only create one object, not one per form
@@ -129,6 +131,7 @@ Namespace Contensive.addons.multiFormAjaxSample
         '
         '
         '
+
         Friend Function getApplication(ByVal cp As CPBaseClass, ByVal createRecordIfMissing As Boolean) As applicationClass
             Dim application As applicationClass = New applicationClass
             Try
@@ -140,6 +143,8 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' use visitor property if each time they open thier browser, they get the previous application
                 ' use user property if they only get to the application when they are associated to the current user (they should be authenticated first)
                 '
+                application.completed = False
+                application.changed = False
                 application.id = cp.Visit.GetInteger("multiformAjaxSample ApplicationId")
                 'application.id = cp.Visitor.GetInteger("multiformAjaxSample ApplicationId")
                 'application.id = cp.user.GetInteger("multiformAjaxSample ApplicationId")
@@ -155,15 +160,6 @@ Namespace Contensive.addons.multiFormAjaxSample
                         application.email = csSrc.GetText("email")
                     End If
                     Call csSrc.Close()
-                    If createRecordIfMissing Then
-                        Call cs.Close()
-                        If cs.Insert("MultiFormAjax Application") Then
-                            application.id = cs.GetInteger("id")
-                            Call cs.SetField("firstName", application.firstName)
-                            Call cs.SetField("lastName", application.lastName)
-                            Call cs.SetField("email", application.email)
-                        End If
-                    End If
                 End If
                 If cs.OK Then
                     application.firstName = cs.GetText("firstName")
@@ -177,5 +173,34 @@ Namespace Contensive.addons.multiFormAjaxSample
             End Try
             Return application
         End Function
+        '
+        '
+        '
+        Public Sub saveApplication(ByVal cp As CPBaseClass, ByVal application As applicationClass, ByVal rightNow As Date)
+            Try
+                Dim cs As CPCSBaseClass = cp.CSNew()
+                If application.changed Then
+                    If application.id > 0 Then
+                        Call cs.Open(cnMultiFormAjaxApplications, "(id=" & application.id & ")")
+                    End If
+                    If Not cs.OK Then
+                        If cs.Insert("MultiFormAjax Application") Then
+                            application.id = cs.GetInteger("id")
+                        End If
+                    End If
+                    If cs.OK Then
+                        Call cs.SetField("firstName", application.firstName)
+                        Call cs.SetField("lastName", application.lastName)
+                        Call cs.SetField("email", application.email)
+                        If application.completed Then
+                            Call cs.SetField("datecompleted", rightNow.ToString)
+                        End If
+                    End If
+                    Call cs.Close()
+                End If
+            Catch ex As Exception
+                Call cp.Site.ErrorReport(ex, "Error in getApplication")
+            End Try
+        End Sub
     End Module
 End Namespace

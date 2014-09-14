@@ -21,10 +21,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                     '
                     ' process the form
                     '
-                    If cs.Open(cnMultiFormAjaxApplications, "id=" & applicationId) Then
-                        Call cs.SetField("dateCompleted", rightNow.ToString)
-                    End If
-                    Call cs.Close()
+                    application.completed = True
                 End If
                 '
                 ' determine the next form

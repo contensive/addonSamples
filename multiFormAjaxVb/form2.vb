@@ -20,8 +20,8 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 ' if the application record has not been created yet, create  it now
                 '
-                If applicationId = 0 Then
-                    applicationId = getApplicationId(cp, True)
+                If application.id = 0 Then
+                    application = getApplication(cp, True)
                 End If
                 '
                 ' check the input requirements
@@ -36,10 +36,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 ' if errors, just return default nextFormId which will redisplay this form
                 '
                 If isInputOK Then
-                    If cs.Open(cnMultiFormAjaxApplications, "id=" & applicationId) Then
-                        Call cs.SetField("lastName", lastName)
-                    End If
-                    Call cs.Close()
+                    application.lastName = lastName
                     '
                     ' determine the next form
                     '
@@ -71,10 +68,6 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 ' manuiplate the html, pre-populating fields, hiding parts not needed, etc.
                 '
-                If cs.Open("MultiFormAjax Application", "(id=" & applicationId & ")") Then
-                    lastName = cs.GetText("lastName")
-                End If
-                Call cs.Close()
                 ' get the resulting form from the layout object
                 ' add the srcFormId as a hidden
                 ' wrap it in a form for the javascript to use during submit
