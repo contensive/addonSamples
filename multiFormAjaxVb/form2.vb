@@ -13,15 +13,16 @@ Namespace Contensive.addons.multiFormAjaxSample
         Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
-                Dim button As String = cp.Doc.GetProperty(rnButton)
+                Dim button As String
                 Dim cs As CPCSBaseClass = cp.CSNew
                 Dim lastName As String
                 Dim isInputOK As Boolean = True
                 '
-                ' if the application record has not been created yet, create  it now
+                ' ajax routines return a different name for button
                 '
-                If application.id = 0 Then
-                    application = getApplication(cp, True)
+                button = cp.Doc.GetText("ajaxButton")
+                If button = "" Then
+                    button = cp.Doc.GetText(rnButton)
                 End If
                 '
                 ' check the input requirements
@@ -37,17 +38,19 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 If isInputOK Then
                     application.lastName = lastName
-                    '
-                    ' determine the next form
-                    '
-                    Select Case button
-                        Case buttonNext
-                            nextFormId = formIdThree
-                        Case buttonPrevious
-                            nextFormId = formIdOne
-                    End Select
+                    application.changed = True
                 End If
-
+                '
+                ' determine the next form
+                '
+                Select Case button
+                    Case buttonNext
+                        If isInputOK Then
+                            nextFormId = formIdThree
+                        End If
+                    Case buttonPrevious
+                        nextFormId = formIdOne
+                End Select
             Catch ex As Exception
                 errorReport(ex, cp, "processForm")
             End Try
@@ -62,11 +65,12 @@ Namespace Contensive.addons.multiFormAjaxSample
                 Dim layout As CPBlockBaseClass = cp.BlockNew
                 Dim cs As CPCSBaseClass = cp.CSNew
                 Dim body As String
-                Dim lastName As String
                 '
                 Call layout.OpenLayout("MultiFormAjaxSample - Form 2")
                 '
                 ' manuiplate the html, pre-populating fields, hiding parts not needed, etc.
+                '
+                Call layout.SetInner("#mfaLastNameWrapper", cp.Html.InputText("lastName", application.lastName))
                 '
                 ' get the resulting form from the layout object
                 ' add the srcFormId as a hidden
@@ -74,7 +78,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 body = layout.GetHtml()
                 body &= cp.Html.Hidden(rnSrcFormId, dstFormId.ToString)
-                returnHtml = cp.Html.Form(body, , , "mfaForm2")
+                returnHtml = cp.Html.Form(body, , , "mfaForm2", rqs)
             Catch ex As Exception
                 errorReport(ex, cp, "getForm")
             End Try

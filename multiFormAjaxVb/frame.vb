@@ -19,12 +19,12 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 ' use the formHandler. It is built to handle ajax calls, so setup the call like an ajax call would be, setting the Refresh Query String
                 '
-                Call CP.Doc.SetProperty("baseRqs", rqs)
+                Call CP.Doc.SetProperty("multiformAjaxVbFrameRqs", rqs)
                 body = formHandler.Execute(CP)
                 '
-                ' adding thisProjectBaseRqs to the page's javascript environment is important so ajax requests back from the page can know what the frame's RQS was for links, etc.
+                ' adding multiformAjaxVbFrameRqs to the page's javascript environment is important so ajax requests back from the page can know what the frame's RQS was for links, etc.
                 '
-                Call CP.Doc.AddHeadJavascript("var msBaseRqs='" & rqs & "';")
+                Call CP.Doc.AddHeadJavascript("var multiformAjaxVbFrameRqs='" & rqs & "';")
                 returnHtml = CP.Html.div(body, , , "multiFormAjaxFrame")
             Catch ex As Exception
                 CP.Site.ErrorReport(ex, "error in multiFormAjaxSample.execute")

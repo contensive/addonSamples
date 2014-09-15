@@ -21,7 +21,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 Dim body As String = ""
                 Dim form As formBaseClass
-                Dim rqs As String = CP.Doc.GetProperty("baseRqs")
+                Dim rqs As String = CP.Doc.GetProperty("multiformAjaxVbFrameRqs")
                 Dim rightNow As Date = getRightNow(CP)
                 Dim srcFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnSrcFormId))
                 Dim dstFormId As Integer = CP.Utils.EncodeInteger(CP.Doc.GetProperty(rnDstFormId))
@@ -88,7 +88,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                         body = form.getForm(CP, dstFormId, rqs, rightNow, application)
                     Case Else
                         '
-                        ' default is account list
+                        ' default form
                         '
                         dstFormId = formIdOne
                         form = New form1Class

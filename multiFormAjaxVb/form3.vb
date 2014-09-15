@@ -13,15 +13,22 @@ Namespace Contensive.addons.multiFormAjaxSample
         Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightNow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
-                Dim button As String = cp.Doc.GetProperty(rnButton)
+                Dim button As String
                 Dim cs As CPCSBaseClass = cp.CSNew
                 '
-
+                ' ajax routines return a different name for button
+                '
+                button = cp.Doc.GetText("ajaxButton")
+                If button = "" Then
+                    button = cp.Doc.GetText(rnButton)
+                End If
+                '
                 If button = buttonFinish Then
                     '
                     ' process the form
                     '
                     application.completed = True
+                    application.changed = True
                 End If
                 '
                 ' determine the next form
@@ -56,7 +63,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 body = layout.GetHtml()
                 body &= cp.Html.Hidden(rnSrcFormId, dstFormId.ToString)
-                returnHtml = cp.Html.Form(body, , , "mfaForm3")
+                returnHtml = cp.Html.Form(body, , , "mfaForm3", rqs)
             Catch ex As Exception
                 errorReport(ex, cp, "getForm")
             End Try

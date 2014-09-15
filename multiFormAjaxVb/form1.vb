@@ -13,15 +13,16 @@ Namespace Contensive.addons.multiFormAjaxSample
         Friend Overrides Function processForm(ByVal cp As CPBaseClass, ByVal srcFormId As Integer, ByVal rqs As String, ByVal rightnow As Date, ByRef application As applicationClass) As Integer
             Dim nextFormId As Integer = srcFormId
             Try
-                Dim button As String = cp.Doc.GetProperty(rnButton)
+                Dim button As String
                 Dim cs As CPCSBaseClass = cp.CSNew
                 Dim firstName As String
                 Dim isInputOK As Boolean = True
                 '
-                ' if the application record has not been created yet, create  it now
+                ' ajax routines return a different name for button
                 '
-                If application.id = 0 Then
-                    application = getApplication(cp, True)
+                button = cp.Doc.GetText("ajaxButton")
+                If button = "" Then
+                    button = cp.Doc.GetText(rnButton)
                 End If
                 '
                 ' check the input requirements
@@ -37,6 +38,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 If isInputOK Then
                     application.firstName = firstName
+                    application.changed = True
                     '
                     ' determine the next form
                     '
@@ -73,7 +75,7 @@ Namespace Contensive.addons.multiFormAjaxSample
                 '
                 body = layout.GetHtml()
                 body &= cp.Html.Hidden(rnSrcFormId, dstFormId.ToString)
-                returnHtml = cp.Html.Form(body, , , "mfaForm1")
+                returnHtml = cp.Html.Form(body, , , "mfaForm1", rqs)
             Catch ex As Exception
                 errorReport(ex, cp, "getForm")
             End Try

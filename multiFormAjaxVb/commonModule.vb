@@ -153,18 +153,24 @@ Namespace Contensive.addons.multiFormAjaxSample
                         application.id = 0
                     End If
                 End If
-                If (Not cs.OK) Then
+                If cs.OK Then
+                    '
+                    ' application record exists, use application data
+                    '
+                    application.firstName = cs.GetText("firstName")
+                    application.lastName = cs.GetText("lastName")
+                    application.email = cs.GetText("email")
+                Else
+                    '
+                    ' application does not exist, load defaults
+                    ' this is a good place for an improvement - these could load on demain, loading only when they are needed
+                    '
                     If csSrc.Open("people", "id=" & cp.User.Id) Then
                         application.firstName = csSrc.GetText("firstName")
                         application.lastName = csSrc.GetText("lastName")
                         application.email = csSrc.GetText("email")
                     End If
                     Call csSrc.Close()
-                End If
-                If cs.OK Then
-                    application.firstName = cs.GetText("firstName")
-                    application.lastName = cs.GetText("lastName")
-                    application.email = cs.GetText("email")
                 End If
                 Call cs.Close()
 
@@ -185,7 +191,16 @@ Namespace Contensive.addons.multiFormAjaxSample
                     End If
                     If Not cs.OK Then
                         If cs.Insert("MultiFormAjax Application") Then
+                            '
+                            ' create a new record. 
+                            ' Set application Id incase needed later
+                            ' Set visit property to save the application Id
+                            '
                             application.id = cs.GetInteger("id")
+                            Call cp.Visit.SetProperty("multiformAjaxSample ApplicationId", application.id.ToString())
+                            'Call cp.Visitor.SetProperty("multiformAjaxSample ApplicationId", application.id.ToString())
+                            'Call cp.User.SetProperty("multiformAjaxSample ApplicationId", application.id.ToString())
+                            Call cs.SetField("visitId", cp.Visit.Id.ToString())
                         End If
                     End If
                     If cs.OK Then
