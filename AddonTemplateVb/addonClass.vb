@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 Imports System.Text
 Imports Contensive.BaseClasses
 
-Namespace addonCollectionName
+Namespace Contensive.Addons
     '
     ' Sample Vb addon
     '
@@ -37,7 +37,7 @@ Namespace addonCollectionName
         '
         Private Sub errorReport(ByVal cp As CPBaseClass, ByVal ex As Exception, ByVal method As String)
             Try
-                CP.Site.ErrorReport(ex, "Unexpected error in sampleClass." & method)
+                cp.Site.ErrorReport(ex, "Unexpected error in sampleClass." & method)
             Catch exLost As Exception
                 '
                 ' stop anything thrown from cp errorReport
