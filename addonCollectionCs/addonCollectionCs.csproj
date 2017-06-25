@@ -8,7 +8,7 @@
     <ProjectGuid>{BD7F68DB-C1C8-4B4B-A1CE-ECE3F4C3689A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Contensive.Addon.AddonCollectionCs</RootNamespace>
+    <RootNamespace>AddonCollectionCs</RootNamespace>
     <AssemblyName>AddonCollectionCs</AssemblyName>
     <SccProjectName>
     </SccProjectName>
@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="constants.cs" />
     <Compile Include="Controllers\genericController.cs" />
     <Compile Include="Models\baseModel.cs" />
     <Compile Include="Models\_blankModel.cs" />

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Contensive.BaseClasses;
 
-namespace Contensive.Addon.AddonCollectionCs.Views
+namespace AddonCollectionCs.Views
 {
     //
     // this sample creates an addon collection (a group off addons that install together)

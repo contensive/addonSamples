@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Contensive.BaseClasses;
-using Contensive.Addon.AddonCollectionCs.Models;
-using Contensive.Addon.AddonCollectionCs.Views;
-using Contensive.Addon.AddonCollectionCs.Controllers;
+using AddonCollectionCs.Models;
+using AddonCollectionCs.Views;
+using AddonCollectionCs.Controllers;
 
-namespace Contensive.Addon.AddonCollectionCs.Controllers
+namespace AddonCollectionCs.Controllers
 {
     public static class genericController
     {
