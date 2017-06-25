@@ -108,8 +108,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)*.dll" "C:\Program Files\kma\Contensive\Addons"
-copy "$(TargetDir)*.dll" "C:\Program Files (x86)\kma\Contensive\Addons"
+    <PostBuildEvent>copy "$(TargetDir)*.dll" "C:\Program Files (x86)\kma\Contensive\Addons"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>
