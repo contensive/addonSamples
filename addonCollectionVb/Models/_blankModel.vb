@@ -11,6 +11,7 @@ Imports Newtonsoft.Json
 Namespace Contensive.Addon.AddonCollectionVb.Controllers
     Public Class _blankModel
         Inherits baseModel
+        Implements ICloneable
         '
         '====================================================================================================
         '-- const
@@ -76,5 +77,32 @@ Namespace Contensive.Addon.AddonCollectionVb.Controllers
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
             Return baseModel.getRecordId(Of _blankModel)(cp, ccGuid)
         End Function
+        '
+        '====================================================================================================
+        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
+            Return baseModel.getCount(Of _blankModel)(cp, sqlCriteria)
+        End Function
+        '
+        '====================================================================================================
+        Public Overloads Function getUploadPath(fieldName As String) As String
+            Return MyBase.getUploadPath(Of _blankModel)(fieldName)
+        End Function
+        '
+        '====================================================================================================
+        '
+        Public Function Clone(cp As CPBaseClass) As _blankModel
+            Dim result As _blankModel = DirectCast(Me.Clone(), _blankModel)
+            result.id = cp.Content.AddRecord(contentName)
+            result.ccguid = cp.Utils.CreateGuid()
+            result.save(cp)
+            Return result
+        End Function
+        '
+        '====================================================================================================
+        '
+        Public Function Clone() As Object Implements ICloneable.Clone
+            Return Me.MemberwiseClone()
+        End Function
+
     End Class
 End Namespace

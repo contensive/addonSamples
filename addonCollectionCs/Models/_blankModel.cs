@@ -90,5 +90,24 @@ namespace AddonCollectionCs.Models
         {
             return baseModel.getRecordId<_blankModel>(cp, ccGuid);
         }
+
+        //
+        //====================================================================================================
+        //
+        public _blankModel Clone(CPBaseClass cp)
+        {
+            _blankModel result = (_blankModel)this.Clone();
+            result.id = cp.Content.AddRecord(contentName);
+            result.ccguid = cp.Utils.CreateGuid();
+            result.save(cp);
+            return result;
+        }
+        //
+        //====================================================================================================
+        //
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

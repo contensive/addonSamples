@@ -534,6 +534,46 @@ namespace AddonCollectionCs.Models
             }
             return 0;
         }
+        //
+        //====================================================================================================
+        protected static int getCount<T>(CPBaseClass cp, string sqlCriteria) where T : baseModel
+        {
+            int result = 0;
+            try
+            {
+                Type instanceType = typeof(T);
+                string tableName = derivedContentTableName(instanceType);
+                CPCSBaseClass cs = cp.CSNew();
+                string sql = "select count(id) as cnt from " + tableName;
+                if ((!string.IsNullOrEmpty(sqlCriteria)))
+                {
+                    sql += " where " + sqlCriteria;
+                }
+                if ((cs.OpenSQL(sql)))
+                {
+                    result = cs.GetInteger("cnt");
+                }
+                cs.Close();
+            }
+            catch (Exception ex)
+            {
+                cp.Site.ErrorReport(ex);
+            }
+            return result;
+        }
+        //====================================================================================================
+        /// <summary>
+        /// Temporary method to create a path for an uploaded. First, try the texrt value in the field. If it is empty, use this method to create the path,
+        /// append the filename to the end and save it to the field, and save the file there. This path starts with the tablename and ends with a slash.
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        protected string getUploadPath<T>(string fieldName) where T : baseModel
+        {
+            Type instanceType = typeof(T);
+            string tableName = derivedContentTableName(instanceType);
+            return tableName.ToLower() + "/" + fieldName.ToLower() + "/" + id.ToString().PadLeft(12, Convert.ToChar("0")) + "/";
+        }
     }
 }
 

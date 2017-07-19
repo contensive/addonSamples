@@ -423,5 +423,38 @@ Namespace Contensive.Addon.AddonCollectionVb.Controllers
             End Try
             Return 0
         End Function
+        '
+        '====================================================================================================
+        Protected Shared Function getCount(Of T As baseModel)(cp As CPBaseClass, sqlCriteria As String) As Integer
+            Dim result As Integer = 0
+            Try
+                Dim instanceType As Type = GetType(T)
+                Dim tableName As String = derivedContentTableName(instanceType)
+                Dim cs As CPCSBaseClass = cp.CSNew()
+                Dim sql As String = "select count(id) as cnt from " & tableName
+                If (Not String.IsNullOrEmpty(sqlCriteria)) Then
+                    sql &= " where " & sqlCriteria
+                End If
+                If (cs.OpenSQL(sql)) Then
+                    result = cs.GetInteger("cnt")
+                End If
+                cs.Close()
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+            End Try
+            Return result
+        End Function
+        '====================================================================================================
+        ''' <summary>
+        ''' Temporary method to create a path for an uploaded. First, try the texrt value in the field. If it is empty, use this method to create the path,
+        ''' append the filename to the end and save it to the field, and save the file there. This path starts with the tablename and ends with a slash.
+        ''' </summary>
+        ''' <param name="fieldName"></param>
+        ''' <returns></returns>
+        Protected Function getUploadPath(Of T As baseModel)(fieldName As String) As String
+            Dim instanceType As Type = GetType(T)
+            Dim tableName As String = derivedContentTableName(instanceType)
+            Return tableName.ToLower() & "/" & fieldName.ToLower() & "/" & id.ToString().PadLeft(12, CChar("0")) & "/"
+        End Function
     End Class
 End Namespace
